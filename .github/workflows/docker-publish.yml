@@ -15,7 +15,7 @@ on:
 
 env:
   # TODO: Change variable to your image's name.
-  IMAGE_NAME: image
+  IMAGE_NAME: test-actions
 
 jobs:
   # Run tests.
@@ -41,6 +41,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Build image
+        run: docker build . --file test-container/Dockerfile --tag $IMAGE_NAME
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -58,8 +61,19 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: actions-build-test
           IMAGE_TAG: ${{ github.sha }}
+          IMAGE_ID: actions-build-test
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+#           docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_TAG
+#           docker push $IMAGE_ID:$VERSION
+          
+          
+#           # Change all uppercase to lowercase
+#           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+          
+#           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+
 
       - name: Logout of Amazon ECR
         if: always()
