@@ -1,3 +1,3 @@
-#helllllo asdf asdfasdf
+#helllllo
 FROM busybox
 RUN echo "greetings cncf infra, my name is busybox"
