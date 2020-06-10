@@ -43,7 +43,9 @@ jobs:
       - uses: actions/checkout@v2
       
       - name: Build image
-        run: docker build . --file test-container/Dockerfile --tag $ECR_REGISTRY/$ECR_REPOSITORY
+        env:
+          IMAGE_ID: $ECR_REGISTRY/$ECR_REPOSITORY
+        run: docker build . --file test-container/Dockerfile --tag $IMAGE_ID
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -61,42 +63,10 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: actions-build-test
           IMAGE_TAG: ${{ github.sha }}
-          IMAGE_ID: actions-build-test
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          
-#           docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_TAG
-#           docker push $IMAGE_ID:$VERSION
-          
-          
-#           # Change all uppercase to lowercase
-#           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          
-#           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
 
 
       - name: Logout of Amazon ECR
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
-
-#       - name: Push image
-#         run: |
-#           IMAGE_ID=docker.pkg.github.com/${{ github.repository }}/$IMAGE_NAME
-          
-#           # Change all uppercase to lowercase
-#           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-
-#           # Strip git ref prefix from version
-#           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-
-#           # Strip "v" prefix from tag name
-#           [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-
-#           # Use Docker `latest` tag convention
-#           [ "$VERSION" == "master" ] && VERSION=latest
-
-#           echo IMAGE_ID=$IMAGE_ID
-#           echo VERSION=$VERSION
-
-#           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-#           docker push $IMAGE_ID:$VERSION
