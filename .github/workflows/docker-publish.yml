@@ -73,6 +73,7 @@ jobs:
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           if [ "$VERSION" == "master" ]; then
             docker tag $IMAGE_NAME $IMAGE_ID:latest
+          fi
           
           docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY
