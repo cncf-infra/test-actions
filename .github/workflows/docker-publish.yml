@@ -62,7 +62,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: actions-build-test
-          IMAGE_TAG: ${{ GITHUB_SHA::8 }}
+          IMAGE_TAG: ${GITHUB_SHA::8}
         run: |
           IMAGE_ID=$ECR_REGISTRY/$ECR_REPOSITORY
           
