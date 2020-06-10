@@ -47,6 +47,11 @@ jobs:
           IMAGE_ID: $ECR_REGISTRY/$ECR_REPOSITORY
         run: docker build . --file test-container/Dockerfile --tag $IMAGE_NAME
         
+      - name: Get short SHA
+        id: slug
+        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+
+        
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -62,7 +67,6 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: actions-build-test
-          IMAGE_TAG: ${GITHUB_SHA::8}
         run: |
           IMAGE_ID=$ECR_REGISTRY/$ECR_REPOSITORY
           
@@ -75,7 +79,7 @@ jobs:
             docker tag $IMAGE_NAME $IMAGE_ID:latest
           fi
           
-          docker tag $IMAGE_NAME $IMAGE_ID:$IMAGE_TAG
+          docker tag $IMAGE_NAME $IMAGE_ID:${{ steps.slug.outputs.sha8 }}
           docker push $ECR_REGISTRY/$ECR_REPOSITORY
 
 
