@@ -16,7 +16,7 @@ on:
   
 defaults:
   run:
-    working-directory: test-actions/test-container
+    working-directory: test-container
 
 env:
   # TODO: Change variable to your image's name.
